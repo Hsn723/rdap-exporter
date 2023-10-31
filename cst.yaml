@@ -1,0 +1,17 @@
+schemaVersion: "2.0.0"
+fileExistenceTests:
+  - name: "rdap-exporter"
+    path: "/rdap-exporter"
+    shouldExist: true
+    permissions: "-rwxr-xr-x"
+metadataTest:
+  entrypoint: ["/rdap-exporter"]
+  labels:
+    - key: "org.opencontainers.image.authors"
+      value: "Hsn723"
+    - key: "org.opencontainers.image.title"
+      value: "rdap-exporter"
+    - key: "org.opencontainers.image.source"
+      value: "https://github.com/hsn723/rdap-exporter"
+licenseTests:
+  - files: ["/LICENSE"]
