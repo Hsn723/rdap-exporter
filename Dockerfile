@@ -1,4 +1,4 @@
-FROM ghcr.io/cybozu/ubuntu:22.04.20231122 as certs
+FROM ghcr.io/cybozu/ubuntu:22.04.20231124 as certs
 
 FROM scratch
 LABEL org.opencontainers.image.authors="Hsn723" \
