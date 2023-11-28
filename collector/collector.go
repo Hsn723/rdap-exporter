@@ -67,6 +67,7 @@ func collectRdapInfo(ctx context.Context, e *RdapExporter, domain string) {
 		Query: domain,
 	}
 	req = req.WithContext(ctx)
+	req.Timeout = time.Duration(e.config.Timeout) * time.Second
 	client := &rdap.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
