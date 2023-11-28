@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/hsn723/rdap-exporter/collector"
 	"github.com/hsn723/rdap-exporter/config"
@@ -45,7 +44,7 @@ func runRoot(cmd *cobra.Command, _ []string) error {
 	rdapExporter := collector.NewRdapExporter(*conf)
 	prometheus.MustRegister(rdapExporter)
 
-	ctx, cancelFunc := context.WithTimeout(cmd.Context(), time.Duration(conf.Timeout)*time.Second)
+	ctx, cancelFunc := context.WithCancel(cmd.Context())
 	defer cancelFunc()
 	go rdapExporter.StartMetricsCollection(ctx)
 
