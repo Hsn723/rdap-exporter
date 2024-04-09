@@ -6,6 +6,12 @@ updates:
       interval: "daily"
     reviewers:
       - "Hsn723"
+    allow:
+      - dependency-type: "all"
+    groups:
+      all:
+        patterns:
+          - "*"
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
