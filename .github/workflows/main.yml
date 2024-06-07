@@ -34,7 +34,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ env.go-version }}
-      - uses: goreleaser/goreleaser-action@v5
+      - uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
           args: check -f .goreleaser.yml
@@ -76,7 +76,7 @@ jobs:
         with:
           go-version: ${{ env.go-version }}
       - name: GoReleaser
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
           args: release --snapshot --skip=sign,publish,sbom --clean
