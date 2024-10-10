@@ -30,7 +30,7 @@ func TestExecute(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		if !strings.Contains(string(data), "<html>") {
+		if !strings.Contains(string(data), "</html>") {
 			return assert.AnError
 		}
 		return nil
