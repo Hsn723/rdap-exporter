@@ -20,10 +20,11 @@ type RdapExporter struct {
 	config         config.Config
 	domainStatuses *prometheus.GaugeVec
 	domainEvents   *prometheus.GaugeVec
+	logger         *slog.Logger
 }
 
 // NewRdapExporter creates a new RdapExporter instance.
-func NewRdapExporter(config config.Config) *RdapExporter {
+func NewRdapExporter(config config.Config, logger *slog.Logger) *RdapExporter {
 	return &RdapExporter{
 		config: config,
 		domainStatuses: prometheus.NewGaugeVec(prometheus.GaugeOpts{
@@ -36,6 +37,7 @@ func NewRdapExporter(config config.Config) *RdapExporter {
 			Name:      "domain_event",
 			Help:      "Dates pertaining to the domain as a unix timestamp.",
 		}, []string{"domain", "event"}),
+		logger: logger,
 	}
 }
 
@@ -71,12 +73,12 @@ func collectRdapInfo(ctx context.Context, e *RdapExporter, domain string) {
 	client := &rdap.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		slog.Error("could not get RDAP info", "error", err, "domain", domain)
+		e.logger.Error("could not get RDAP info", "error", err, "domain", domain)
 		return
 	}
 	data, ok := resp.Object.(*rdap.Domain)
 	if !ok {
-		slog.Error("RDAP response is not a domain object", "domain", domain)
+		e.logger.Error("RDAP response is not a domain object", "domain", domain)
 		return
 	}
 	for _, rawStatus := range data.Status {
@@ -86,7 +88,7 @@ func collectRdapInfo(ctx context.Context, e *RdapExporter, domain string) {
 	for _, event := range data.Events {
 		date, err := time.Parse(time.RFC3339, event.Date)
 		if err != nil {
-			slog.Error("wrong date format", "error", err, "domain", domain, "event", event.Action)
+			e.logger.Error("wrong date format", "error", err, "domain", domain, "event", event.Action)
 		}
 		action := normalizeLabel(event.Action)
 		e.domainEvents.WithLabelValues(domain, action).Set(float64(date.Unix()))

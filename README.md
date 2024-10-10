@@ -17,6 +17,7 @@ Usage:
 Flags:
   -c, --config string   path to configuration file (default "/etc/rdap-exporter/config.toml")
   -h, --help            help for rdap-exporter
+      --web.config.file string   Path to configuration file that can enable TLS or authentication. See: https://github.com/prometheus/exporter-toolkit/blob/master/docs/web-configuration.md
 ```
 
 ## Configuration

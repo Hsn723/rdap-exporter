@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -12,6 +11,8 @@ import (
 	"github.com/hsn723/rdap-exporter/config"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/prometheus/common/promslog"
+	"github.com/prometheus/exporter-toolkit/web"
 	"github.com/spf13/cobra"
 )
 
@@ -22,7 +23,10 @@ var (
 		RunE:  runRoot,
 	}
 
-	configFile string
+	logger = promslog.New(&promslog.Config{})
+
+	configFile    string
+	webConfigFile string
 
 	version string
 	commit  string
@@ -32,16 +36,17 @@ var (
 
 func init() {
 	rootCmd.Flags().StringVarP(&configFile, "config", "c", config.DefaultConfigFile, "path to configuration file")
+	rootCmd.Flags().StringVar(&webConfigFile, "web.config.file", "", "Path to configuration file that can enable TLS or authentication. See: https://github.com/prometheus/exporter-toolkit/blob/master/docs/web-configuration.md")
 }
 
 func runRoot(cmd *cobra.Command, _ []string) error {
-	slog.Info("rdap-exporter", "version", version, "commit", commit, "date", date, "built_by", builtBy)
+	logger.Info("rdap-exporter", "version", version, "commit", commit, "date", date, "built_by", builtBy)
 	conf, err := config.Load(configFile)
 	if err != nil {
 		return err
 	}
-	slog.Info("loaded configuration", "config", configFile)
-	rdapExporter := collector.NewRdapExporter(*conf)
+	logger.Info("loaded configuration", "config", configFile)
+	rdapExporter := collector.NewRdapExporter(*conf, logger)
 	prometheus.MustRegister(rdapExporter)
 
 	ctx, cancelFunc := context.WithCancel(cmd.Context())
@@ -49,31 +54,39 @@ func runRoot(cmd *cobra.Command, _ []string) error {
 	go rdapExporter.StartMetricsCollection(ctx)
 
 	http.Handle("/metrics", promhttp.Handler())
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		_, err := w.Write([]byte(`
-			<html>
-			<head><title>RDAP Exporter</title></head>
-			<body>
-			<h1>RDAP Exporter</h1>
-			<p><a href='metrics'>Metrics</a></p>
-			</body>
-			</html>
-		`))
-		if err != nil {
-			slog.Error("HTTP write failed", "error", err)
-		}
-	})
+	lc := web.LandingConfig{
+		Name:        "RDAP Exporter",
+		Description: "Prometheus exporter for domain RDAP information",
+		Version:     version,
+		Links: []web.LandingLinks{
+			{
+				Address: "/metrics",
+				Text:    "Metrics",
+			},
+		},
+	}
+	lp, err := web.NewLandingPage(lc)
+	if err != nil {
+		return err
+	}
+	http.Handle("/", lp)
 
 	listenAddress := net.JoinHostPort("0.0.0.0", strconv.FormatUint(conf.ListenPort, 10))
-	slog.Info("start listening server", "listen_address", listenAddress)
-	return http.ListenAndServe(listenAddress, nil)
+	useSystemdSocket := false
+	flags := &web.FlagConfig{
+		WebListenAddresses: &[]string{listenAddress},
+		WebSystemdSocket:   &useSystemdSocket,
+		WebConfigFile:      &webConfigFile,
+	}
+	server := &http.Server{}
+	return web.ListenAndServe(server, flags, logger)
 }
 
 // Execute runs the root command.
 func Execute() {
 	ctx := context.Background()
 	if err := rootCmd.ExecuteContext(ctx); err != nil {
-		slog.Error("failed to run rdap-exporter", "error", err)
+		logger.Error("failed to run rdap-exporter", "error", err)
 		os.Exit(1)
 	}
 }
