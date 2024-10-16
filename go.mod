@@ -7,7 +7,7 @@ toolchain go1.23.0
 require (
 	github.com/onsi/gomega v1.34.2
 	github.com/openrdap/rdap v0.9.1
-	github.com/prometheus/client_golang v1.20.4
+	github.com/prometheus/client_golang v1.20.5
 	github.com/prometheus/common v0.60.0
 	github.com/prometheus/exporter-toolkit v0.13.0
 	github.com/spf13/cobra v1.8.1
