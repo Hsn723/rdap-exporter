@@ -5,11 +5,11 @@ go 1.22
 toolchain go1.23.0
 
 require (
-	github.com/onsi/gomega v1.34.2
+	github.com/onsi/gomega v1.35.0
 	github.com/openrdap/rdap v0.9.1
 	github.com/prometheus/client_golang v1.20.5
 	github.com/prometheus/common v0.60.1
-	github.com/prometheus/exporter-toolkit v0.13.0
+	github.com/prometheus/exporter-toolkit v0.13.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
