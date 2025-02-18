@@ -7,6 +7,7 @@ CST_VERSION = 1.16.0
 WORKDIR = /tmp/$(PROJECT)/work
 BINDIR = /tmp/$(PROJECT)/bin
 CONTAINER_STRUCTURE_TEST = $(BINDIR)/container-structure-test
+YQ = $(BINDIR)/yq
 
 PATH := $(PATH):$(BINDIR)
 
@@ -30,11 +31,15 @@ test:
 
 .PHONY: $(CONTAINER_STRUCTURE_TEST)
 $(CONTAINER_STRUCTURE_TEST): $(BINDIR)
-	curl -sSLf -o $(CONTAINER_STRUCTURE_TEST) -O https://storage.googleapis.com/container-structure-test/v$(CST_VERSION)/container-structure-test-linux-amd64 && chmod +x $(CONTAINER_STRUCTURE_TEST)
+	curl -sSLf -o $(CONTAINER_STRUCTURE_TEST) https://github.com/GoogleContainerTools/container-structure-test/releases/latest/download/container-structure-test-linux-amd64 && chmod +x $(CONTAINER_STRUCTURE_TEST)
+
+.PHONY: $(YQ)
+$(YQ): $(BINDIR)
+	GOBIN=$(BINDIR) go install github.com/mikefarah/yq/v4@latest
 
 .PHONY: container-structure-test
-container-structure-test: $(CONTAINER_STRUCTURE_TEST)
-	printf "amd64\narm64" | xargs -n1 -I {} $(CONTAINER_STRUCTURE_TEST) test --image ghcr.io/hsn723/$(PROJECT):$(shell git describe --tags --abbrev=0 --match "v*" || echo v0.0.0)-next-{} --config cst.yaml
+container-structure-test: $(CONTAINER_STRUCTURE_TEST) $(YQ)
+	$(YQ) '.builds[0] | .goarch[]' .goreleaser.yml | xargs -I {} $(CONTAINER_STRUCTURE_TEST) test --image ghcr.io/hsn723/$(PROJECT):$(shell git describe --tags --abbrev=0 --match "v*" || echo v0.0.0)-next-{} --platform linux/{} --config cst.yaml
 
 .PHONY: verify
 verify:
