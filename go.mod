@@ -1,6 +1,9 @@
 module github.com/hsn723/rdap-exporter
 
-go 1.22.0
+go 1.23.0
+
+toolchain go1.24.0
+
 require (
 	github.com/onsi/gomega v1.36.2
 	github.com/openrdap/rdap v0.9.1
