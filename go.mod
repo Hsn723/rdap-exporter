@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.24.1
 
 require (
-	github.com/onsi/gomega v1.37.0
+	github.com/onsi/gomega v1.38.0
 	github.com/openrdap/rdap v0.9.1
 	github.com/prometheus/client_golang v1.22.0
 	github.com/prometheus/common v0.65.0
