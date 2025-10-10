@@ -24,8 +24,8 @@ Flags:
 
 ```toml
 domains = [
-  {name: "example.com", rdap_server_url: "https://example.rdap.server/v1"}
-  {name: "example.net"}
+  {name = "example.com", rdap_server_url = "https://example.rdap.server/v1"},
+  {name = "example.net"}
 ]
 check_interval = 100 # default: 60
 timeout = 100        # default: 30
