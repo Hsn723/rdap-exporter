@@ -17,9 +17,9 @@ func TestLoad(t *testing.T) {
 			title: "Defaults",
 			file:  "../testdata/config.toml",
 			expected: &Config{
-				Domains: []string{
-					"example.com",
-					"example.net",
+				Domains: []Domain{
+					{Name: "example.com"},
+					{Name: "example.net"},
 				},
 				CheckInterval: defaultCheckInterval,
 				Timeout:       defaultTimeout,
@@ -30,9 +30,9 @@ func TestLoad(t *testing.T) {
 			title: "Full",
 			file:  "../testdata/config_full.toml",
 			expected: &Config{
-				Domains: []string{
-					"example.com",
-					"example.net",
+				Domains: []Domain{
+					{Name: "example.com", RdapServerUrl: "https://example.rdap.server/v1"},
+					{Name: "example.net"},
 				},
 				CheckInterval: 100,
 				Timeout:       100,

@@ -12,10 +12,15 @@ const (
 	defaultPort          = 9099
 )
 
+type Domain struct {
+	Name          string `mapstructure:"name"`
+	RdapServerUrl string `mapstructure:"rdap_server_url"`
+}
+
 // Config contains the configuration for rdap-exporter.
 type Config struct {
 	// Domains is a list of domains to scan.
-	Domains []string `mapstructure:"domains"`
+	Domains []Domain `mapstructure:"domains"`
 	// CheckInterval is the interval between scans.
 	CheckInterval uint64 `mapstructure:"check_interval"`
 	// Timeout is the timeout for rdap queries.
