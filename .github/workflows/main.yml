@@ -2,9 +2,14 @@ name: main
 on:
   push:
     branches:
-      - '**'
+      - master
     tags-ignore:
       - '*'
+  pull_request:
+    branches:
+      - master
+permissions:
+  contents: read
 env:
   go-version: stable
   python-version: 3.x
@@ -82,17 +87,3 @@ jobs:
           args: release --snapshot --skip=sign,publish,sbom --clean
       - name: Test built containers
         run: make container-structure-test
-  tag:
-    name: Tag release
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    needs: [lint, verify, check-goreleaser-config, test, dry-run]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          token: ${{ secrets.PAT }}
-      - name: Tag release
-        run: |
-          TAG="v$(cat VERSION)"
-          git tag ${TAG}
-          git push origin ${TAG} || true
