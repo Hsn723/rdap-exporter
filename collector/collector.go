@@ -75,11 +75,7 @@ func collectRdapInfo(ctx context.Context, e *RdapExporter, domain config.Domain)
 			e.logger.Error("could not parse RdapServerUrl", "error", err, "domain", domain.Name, "rdap_server_url", domain.RdapServerUrl)
 			return
 		}
-		req = &rdap.Request{
-			Type:   rdap.DomainRequest,
-			Query:  domain.Name,
-			Server: RdapServerUrl,
-		}
+		req.Server = RdapServerUrl
 	}
 
 	req = req.WithContext(ctx)
