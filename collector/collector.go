@@ -3,6 +3,7 @@ package collector
 import (
 	"context"
 	"log/slog"
+	"net/url"
 	"strings"
 	"time"
 
@@ -63,35 +64,44 @@ func (e *RdapExporter) StartMetricsCollection(ctx context.Context) {
 	}
 }
 
-func collectRdapInfo(ctx context.Context, e *RdapExporter, domain string) {
+func collectRdapInfo(ctx context.Context, e *RdapExporter, domain config.Domain) {
 	req := &rdap.Request{
 		Type:  rdap.DomainRequest,
-		Query: domain,
+		Query: domain.Name,
 	}
+	if domain.RdapServerUrl != "" {
+		RdapServerUrl, err := url.Parse(domain.RdapServerUrl)
+		if err != nil {
+			e.logger.Error("could not parse RdapServerUrl", "error", err, "domain", domain.Name, "rdap_server_url", domain.RdapServerUrl)
+			return
+		}
+		req.Server = RdapServerUrl
+	}
+
 	req = req.WithContext(ctx)
 	req.Timeout = time.Duration(e.config.Timeout) * time.Second
 	client := &rdap.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		e.logger.Error("could not get RDAP info", "error", err, "domain", domain)
+		e.logger.Error("could not get RDAP info", "error", err, "domain", domain.Name)
 		return
 	}
 	data, ok := resp.Object.(*rdap.Domain)
 	if !ok {
-		e.logger.Error("RDAP response is not a domain object", "domain", domain)
+		e.logger.Error("RDAP response is not a domain object", "domain", domain.Name)
 		return
 	}
 	for _, rawStatus := range data.Status {
 		status := normalizeLabel(rawStatus)
-		e.domainStatuses.WithLabelValues(domain, status).Set(1)
+		e.domainStatuses.WithLabelValues(domain.Name, status).Set(1)
 	}
 	for _, event := range data.Events {
 		date, err := time.Parse(time.RFC3339, event.Date)
 		if err != nil {
-			e.logger.Error("wrong date format", "error", err, "domain", domain, "event", event.Action)
+			e.logger.Error("wrong date format", "error", err, "domain", domain.Name, "event", event.Action)
 		}
 		action := normalizeLabel(event.Action)
-		e.domainEvents.WithLabelValues(domain, action).Set(float64(date.Unix()))
+		e.domainEvents.WithLabelValues(domain.Name, action).Set(float64(date.Unix()))
 	}
 }
 

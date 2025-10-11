@@ -23,7 +23,10 @@ Flags:
 ## Configuration
 
 ```toml
-domains = ["example.com", "example.net"]
+domains = [
+  {name = "example.com", rdap_server_url = "https://example.rdap.server/v1"},
+  {name = "example.net"}
+]
 check_interval = 100 # default: 60
 timeout = 100        # default: 30
 listen_port = 9999   # default: 9099

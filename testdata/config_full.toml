@@ -1,4 +1,7 @@
-domains = ["example.com", "example.net"]
+domains = [
+  {name = "example.com", rdap_server_url = "https://example.rdap.server/v1"},
+  {name = "example.net"}
+]
 check_interval = 100
 timeout = 100
 listen_port = 9999

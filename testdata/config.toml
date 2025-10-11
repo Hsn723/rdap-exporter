@@ -1,1 +1,4 @@
-domains = ["example.com", "example.net"]
+domains = [
+  {name = "example.com"},
+  {name = "example.net"}
+]
