@@ -14,6 +14,12 @@ import (
 
 const (
 	namespace = "rdap"
+
+	// Error labels
+	ErrServerURLParse  = "rdap_server_url_parse_error"
+	ErrNoInfo          = "rdap_no_info"
+	ErrNotDomain       = "rdap_response_not_domain"
+	ErrWrongDateFormat = "rdap_wrong_date_format"
 )
 
 // RdapExporter implements a Prometheus Collector.
@@ -80,8 +86,7 @@ func collectRdapInfo(ctx context.Context, e *RdapExporter, domain config.Domain)
 	if domain.RdapServerUrl != "" {
 		RdapServerUrl, err := url.Parse(domain.RdapServerUrl)
 		if err != nil {
-			error := "rdap_server_url_parse_error"
-			e.domainErrors.WithLabelValues(domain.Name, error).Inc()
+			e.domainErrors.WithLabelValues(domain.Name, ErrServerURLParse).Inc()
 			e.logger.Error("could not parse RdapServerUrl", "error", err, "domain", domain.Name, "rdap_server_url", domain.RdapServerUrl)
 			return
 		}
@@ -93,15 +98,13 @@ func collectRdapInfo(ctx context.Context, e *RdapExporter, domain config.Domain)
 	client := &rdap.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		error := "rdap_no_info"
-		e.domainErrors.WithLabelValues(domain.Name, error).Inc()
+		e.domainErrors.WithLabelValues(domain.Name, ErrNoInfo).Inc()
 		e.logger.Error("could not get RDAP info", "error", err, "domain", domain.Name)
 		return
 	}
 	data, ok := resp.Object.(*rdap.Domain)
 	if !ok {
-		error := "rdap_response_not_domain"
-		e.domainErrors.WithLabelValues(domain.Name, error).Inc()
+		e.domainErrors.WithLabelValues(domain.Name, ErrNotDomain).Inc()
 		e.logger.Error("RDAP response is not a domain object", "domain", domain.Name)
 		return
 	}
@@ -112,8 +115,7 @@ func collectRdapInfo(ctx context.Context, e *RdapExporter, domain config.Domain)
 	for _, event := range data.Events {
 		date, err := time.Parse(time.RFC3339, event.Date)
 		if err != nil {
-			error := "rdap_wrong_date_format"
-			e.domainErrors.WithLabelValues(domain.Name, error).Inc()
+			e.domainErrors.WithLabelValues(domain.Name, ErrWrongDateFormat).Inc()
 			e.logger.Error("wrong date format", "error", err, "domain", domain.Name, "event", event.Action)
 		}
 		action := normalizeLabel(event.Action)
