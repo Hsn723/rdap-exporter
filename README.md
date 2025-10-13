@@ -46,4 +46,10 @@ rdap_domain_event{domain="example.com",event="registration"} 8.083728e+08
 rdap_domain_status{domain="example.com",status="client_delete_prohibited"} 1
 rdap_domain_status{domain="example.com",status="client_transfer_prohibited"} 1
 rdap_domain_status{domain="example.com",status="client_update_prohibited"} 1
+# HELP rdap_domain_error Count of errors encountered per domain and error type.
+# TYPE rdap_domain_error counter
+rdap_domain_error{domain="example.com",error="rdap_server_url_parse_error"} 1
+rdap_domain_error{domain="example.com",error="rdap_no_info"} 1
+rdap_domain_error{domain="example.com",error="rdap_response_not_domain"} 1
+rdap_domain_error{domain="example.com",error="rdap_wrong_date_format"} 1
 ```
