@@ -4,8 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    reviewers:
-      - "Hsn723"
+    cooldown:
+      default-days: 3
     allow:
       - dependency-type: "all"
     groups:
@@ -16,11 +16,17 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    reviewers:
-      - "Hsn723"
+    cooldown:
+      default-days: 3
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
-    reviewers:
-      - "Hsn723"
+    cooldown:
+      default-days: 3
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    cooldown:
+      default-days: 3
