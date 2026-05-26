@@ -27,9 +27,9 @@ jobs:
         with:
           go-version: ${{ env.go-version }}
       - name: Lint
-        uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
+        uses: hsn723/actions/pre-commit@0006fb81cac65f798c4fdb6a3676e329d84272c1 # v1.0.21
         with:
-          extra_args: --all-files
+          extra-args: --all-files
   check-goreleaser-config:
     name: Check goreleaser.yml
     runs-on: ubuntu-latest
