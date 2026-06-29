@@ -3,7 +3,7 @@ module github.com/hsn723/rdap-exporter
 go 1.25.0
 
 require (
-	github.com/onsi/gomega v1.42.0
+	github.com/onsi/gomega v1.42.1
 	github.com/openrdap/rdap v0.9.1
 	github.com/prometheus/client_golang v1.23.2
 	github.com/prometheus/common v0.69.0
@@ -33,7 +33,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
-	github.com/pelletier/go-toml/v2 v2.4.1 // indirect
+	github.com/pelletier/go-toml/v2 v2.4.2 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/procfs v0.20.1 // indirect
