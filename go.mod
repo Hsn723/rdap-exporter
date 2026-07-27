@@ -5,8 +5,8 @@ go 1.25.0
 require (
 	github.com/onsi/gomega v1.42.1
 	github.com/openrdap/rdap v0.10.1
-	github.com/prometheus/client_golang v1.24.0
-	github.com/prometheus/common v0.70.0
+	github.com/prometheus/client_golang v1.24.1
+	github.com/prometheus/common v0.70.1
 	github.com/prometheus/exporter-toolkit v0.17.1
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
