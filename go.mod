@@ -3,7 +3,7 @@ module github.com/hsn723/rdap-exporter
 go 1.26.0
 
 require (
-	github.com/onsi/gomega v1.43.0
+	github.com/onsi/gomega v1.43.1
 	github.com/openrdap/rdap v0.10.2
 	github.com/prometheus/client_golang v1.24.1
 	github.com/prometheus/common v0.71.0
